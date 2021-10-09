@@ -3,5 +3,7 @@ plugins {
 }
 
 dependencies {
-    compileOnlyApi("org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT")
+    compileOnlyApi(files("libs/spigot-1.16.5.jar"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    implementation(project(":core"))
 }
