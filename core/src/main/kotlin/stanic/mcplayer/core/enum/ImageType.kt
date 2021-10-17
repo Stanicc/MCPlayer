@@ -1,6 +1,8 @@
 package stanic.mcplayer.core.enum
 
-enum class ImageType {
+import java.io.Serializable
+
+enum class ImageType : Serializable {
 
     PNG, JPEG
 

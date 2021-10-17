@@ -2,6 +2,7 @@ package stanic.mcplayer.core
 
 import com.github.kokorin.jaffree.StreamType
 import com.github.kokorin.jaffree.ffmpeg.*
+import com.madgag.gif.fmsware.AnimatedGifEncoder
 import stanic.mcplayer.core.callback.CreateError
 import stanic.mcplayer.core.callback.DownloaderCallback
 import stanic.mcplayer.core.callback.VideoCreateCallback
@@ -9,13 +10,12 @@ import stanic.mcplayer.core.service.YoutubeDownloaderService
 import stanic.mcplayer.core.utils.ImageResizer
 import java.io.File
 import java.nio.file.Paths
-import javax.imageio.ImageIO
 
 class VideoCreator(
     private val ffmpegPath: String
 ) {
 
-    fun create(url: String, path: String, scale: Int, callback: VideoCreateCallback) {
+    fun create(name: String, url: String, path: String, scale: Int, callback: VideoCreateCallback) {
         if (File(path).exists()) {
             callback.onError(CreateError.ALREADY_EXISTS)
             return
@@ -36,6 +36,10 @@ class VideoCreator(
                 val bin = Paths.get(ffmpegPath)
                 val input = Paths.get(file.path)
 
+                val animatedGif = AnimatedGifEncoder()
+                animatedGif.start("$path/$name.gif")
+                animatedGif.setDelay(1000/20)
+
                 var framePosition = 0
                 FFmpeg.atPath(bin)
                     .addInput(UrlInput.fromPath(input))
@@ -47,15 +51,16 @@ class VideoCreator(
                             }
 
                             override fun consume(frame: Frame?) {
-                                if (frame == null) callback.onCreated()
+                                if (frame == null) {
+                                    animatedGif.finish()
+                                    callback.onCreated()
+                                }
                                 else {
                                     if (frame.image != null) {
                                         framePosition += 1
 
                                         val image = ImageResizer.resizeToMapScale(frame.image, scale)
-                                        val fileName = "$framePosition.png"
-
-                                        ImageIO.write(image, "png", File("$path/$fileName"))
+                                        animatedGif.addFrame(image)
                                     }
                                 }
                             }

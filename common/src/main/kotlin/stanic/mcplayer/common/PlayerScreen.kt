@@ -1,8 +1,6 @@
 package stanic.mcplayer.common
 
-import com.sun.beans.finder.FieldFinder.findField
 import net.minecraft.server.v1_16_R3.*
-import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld
@@ -10,8 +8,8 @@ import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.map.MapPalette
-import org.bukkit.map.MapView
 import stanic.mcplayer.common.constants.STARTING_ID
+import stanic.mcplayer.common.utils.findField
 import stanic.mcplayer.common.utils.setFieldValue
 import java.awt.Color
 import java.awt.image.BufferedImage
@@ -21,13 +19,9 @@ import java.util.concurrent.atomic.AtomicInteger
 
 object PlayerScreen {
 
-    private val ENTITY_ID = findField(Entity::class.java, "as")
+    private val ENTITY_ID = findField(Entity::class.java, "id")
     private val MAPS = HashMap<UUID, AtomicInteger>(4)
     private val PREVIOUS_MAPS = HashMap<Location, Int>()
-
-    fun getWorldMap(id: Int): MapView? {
-        return Bukkit.getMap(id)
-    }
 
     fun getNextMapId(location: Location): Int {
         var id = PREVIOUS_MAPS[location]
@@ -57,6 +51,7 @@ object PlayerScreen {
         direction: BlockFace?, pixels: ByteArray?
     ) {
         val item = ItemStack(Items.FILLED_MAP)
+        item.d(mapId)
         item.orCreateTag.setInt("map", mapId)
 
         val frame = EntityItemFrame(
