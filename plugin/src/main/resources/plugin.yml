@@ -1,0 +1,9 @@
+name: MCPlayer
+author: Gabileti
+main: stanic.mcplayer.MCPlayer
+version: 1.0
+api-version: 1.16
+commands:
+  player:
+    aliases:
+      - mcplayer
