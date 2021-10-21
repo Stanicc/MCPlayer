@@ -42,7 +42,6 @@ class Canvas(
 
     fun update(sections: List<CanvasSection>) {
         for (i in this.sections.indices) {
-            destroy(this.sections[i])
             val section = sections[i]
 
             section.direction = blockFace
@@ -50,6 +49,9 @@ class Canvas(
             section.setMapId()
 
             refresh(section)
+
+            if (i != 0) destroy(this.sections[i - 1])
+            if (i == sections.indices.last) destroy(this.sections[i])
         }
 
         this.sections = ArrayList(sections)
